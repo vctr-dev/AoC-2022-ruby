@@ -1,21 +1,14 @@
 def parse(file)
   crates, instructions = File.read(file).split("\n\n")
-  crates =
+  num, *stacks =
     crates
       .split("\n")
-      .map do |v|
-        level = []
-        v.split("").each_slice(4) { |(_, b, _, _)| level << b.strip }
-        level
-      end
+      .map { |v| v.split("").each_slice(4).map { |a| a[1].strip } }
       .reverse
-  stack_numbers = crates[0]
-  stacks = crates[1...crates.length]
+
   stack_hash = {}
-  stack_numbers.each_with_index do |e, i|
-    stack = []
-    stacks.each { |v| stack << v[i] unless v[i].empty? }
-    stack_hash[e] = stack
+  num.each_with_index do |e, i|
+    stack_hash[e] = stacks.map { |v| v[i] }.delete_if { |v| v && v.empty? }
   end
 
   ins =
@@ -23,19 +16,19 @@ def parse(file)
       .split("\n")
       .map do |v|
         _, num, _, src, _, dest = v.split(" ")
-        [num, src, dest]
+        [num.to_i, src, dest]
       end
 
   [stack_hash, ins]
 end
 
 def part1((s, ins))
-  ins.each { |(num, src, dest)| num = num.to_i.times { s[dest] << s[src].pop } }
+  ins.each { |(num, src, dest)| s[dest] += s[src].pop(num).reverse }
   s.values.map { |v| v.last }.join
 end
 
 def part2((s, ins))
-  ins.each { |(num, src, dest)| s[dest].concat(s[src].pop(num.to_i)) }
+  ins.each { |(num, src, dest)| s[dest] += s[src].pop(num) }
   s.values.map { |v| v.last }.join
 end
 
