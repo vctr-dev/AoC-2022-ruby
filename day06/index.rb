@@ -2,22 +2,16 @@ def parse(file)
   File.read(file).split("")
 end
 
+def get_index(a, cs)
+  cs + a.each_cons(cs).find_index { |a| a.uniq.length == cs }
+end
+
 def part1(input)
-  index = 0
-  input.each_with_index do |_, i|
-    index = i + 4 if index == 0 &&
-      (input[i...i + 4] | input[i...i + 4]).length == 4
-  end
-  index
+  get_index(input, 4)
 end
 
 def part2(input)
-  index = 0
-  input.each_with_index do |_, i|
-    index = i + 14 if index == 0 &&
-      (input[i...i + 14] | input[i...i + 14]).length == 14
-  end
-  index
+  get_index(input, 14)
 end
 
 puts "Part 1"
