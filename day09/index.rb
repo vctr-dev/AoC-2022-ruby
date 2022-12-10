@@ -69,15 +69,31 @@ class Rope
   end
 end
 
+def viz(graph)
+  graph = graph.to_a
+  x_minmax = graph.map { |(x)| x }.minmax
+  y_minmax = graph.map { |(_, y)| y }.minmax
+  output = ""
+  (y_minmax[0]..y_minmax[1]).each do |y|
+    collect = ""
+    (x_minmax[0]..x_minmax[1]).each do |x|
+      collect += graph.include?([x, y]) ? "#" : "."
+    end
+    puts collect
+  end
+end
+
 def part1(input)
   rope = Rope.new(1)
   input.each { |(d, n)| rope.moves(d, n) }
+  viz(rope.get_tail.trail)
   rope.get_tail.trail.length
 end
 
 def part2(input)
   rope = Rope.new(9)
   input.each { |(d, n)| rope.moves(d, n) }
+  viz(rope.get_tail.trail)
   rope.get_tail.trail.length
 end
 
@@ -87,5 +103,6 @@ p part1(parse("data.txt"))
 
 puts
 puts "Part 2"
+p part2(parse("sample.txt"))
 p part2(parse("sample2.txt"))
 p part2(parse("data.txt"))
